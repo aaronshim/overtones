@@ -2,8 +2,9 @@ module View exposing (..)
 
 import Dict
 import Html exposing (..)
-import Html.Attributes exposing (checked, disabled, name, type_, value)
-import Html.Events exposing (onClick, onInput)
+import Html.Attributes exposing (checked, disabled, name, selected, type_, value)
+import Html.Events exposing (onClick, onInput, on, targetValue)
+import Json.Decode
 import Model exposing (..)
 import Update exposing (..)
 
@@ -81,15 +82,17 @@ viewTone i tone =
                     )
                 ]
             , button [ onClick Remove ] [ text "Remove" ]
-            , viewPicker ("wave-type-" ++ (toString i))
-                [ ( "Sine"
-                  , SetWaveType SineWave
-                  , tone.waveType == SineWave
-                  )
-                , ( "Sawtooth"
-                  , SetWaveType SawtoothWave
-                  , tone.waveType == SawtoothWave
-                  )
+            , selectPicker
+                (\s ->
+                    case s of
+                        "Sawtooth" ->
+                            SetWaveType SawtoothWave
+
+                        _ ->
+                            SetWaveType SineWave
+                )
+                [ ( "Sine", tone.waveType == SineWave )
+                , ( "Sawtooth", tone.waveType == SawtoothWave )
                 ]
             , label []
                 [ input
@@ -121,14 +124,24 @@ viewTone i tone =
 -- helpers
 
 
-viewPicker : String -> List ( String, a, Bool ) -> Html a
-viewPicker fieldName options =
-    fieldset [] (List.map (radio fieldName) options)
+selectPicker : (String -> a) -> List ( String, Bool ) -> Html a
+selectPicker msgMatcher options =
+    let
+        onInputFun =
+            Json.Decode.map msgMatcher targetValue
+    in
+        select
+            [ on "change" onInputFun ]
+            (List.map selectPickerOption options)
 
 
-radio : String -> ( String, a, Bool ) -> Html a
-radio fieldName ( textValue, msg, isSelected ) =
-    label []
-        [ input [ type_ "radio", onClick msg, name fieldName, checked isSelected ] []
-        , text textValue
-        ]
+selectPickerOption : ( String, Bool ) -> Html a
+selectPickerOption ( textValue, isSelected ) =
+    let
+        defaultSelect =
+            if isSelected then
+                [ selected True ]
+            else
+                []
+    in
+        option ((value textValue) :: defaultSelect) [ text textValue ]

@@ -113,5 +113,5 @@ emptyModel =
         { tones = Dict.empty
         , nextIndex = 0
         }
-    , playing = False
+    , playing = True
     }
