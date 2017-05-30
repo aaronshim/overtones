@@ -8,15 +8,16 @@ type Msg
     | RemoveTone
     | PlayAll
     | PauseAll
-    | Modify Index ToneMsg
+    | ModifyTone Index ToneMsg
 
 
 type ToneMsg
-    = SetFreq Frequency
+    = SetFreq String
     | SetWaveType WaveType
-    | SetVolume Volume
+    | SetVolume String
     | Play
     | Pause
+    | Remove
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -36,7 +37,11 @@ update msg model =
                 PauseAll ->
                     { model | playing = False }
 
-                Modify i toneMsg ->
+                ModifyTone i Remove ->
+                    -- sorry but we have to special case this
+                    { model | tones = removeSpecificToneInCollection i model.tones }
+
+                ModifyTone i toneMsg ->
                     { model | tones = updateToneInCollection i (updateTone toneMsg) model.tones }
     in
         ( updatedModel, Cmd.none )
@@ -45,17 +50,31 @@ update msg model =
 updateTone : ToneMsg -> Tone -> Tone
 updateTone msg tone =
     case msg of
-        SetFreq f ->
-            { tone | freq = f }
+        SetFreq freqStr ->
+            case String.toFloat freqStr of
+                Ok f ->
+                    { tone | freq = f }
+
+                _ ->
+                    tone
 
         SetWaveType wt ->
             { tone | waveType = wt }
 
-        SetVolume v ->
-            { tone | volume = v }
+        SetVolume volStr ->
+            case String.toFloat volStr of
+                Ok v ->
+                    { tone | volume = v }
+
+                _ ->
+                    tone
 
         Play ->
             { tone | playing = True }
 
         Pause ->
             { tone | playing = False }
+
+        _ ->
+            -- Remove and possibly other NoOp cases
+            tone

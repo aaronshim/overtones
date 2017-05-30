@@ -1,6 +1,6 @@
 module Model exposing (..)
 
-import Dict exposing (..)
+import Dict exposing (Dict)
 
 
 type WaveType
@@ -61,13 +61,37 @@ removeToneInCollection collection =
 
         dictWithoutLastTone =
             Dict.remove lastToneIndex collection.tones
+
+        correctedNextIndex =
+            max 0 lastToneIndex
     in
-        { collection | tones = dictWithoutLastTone, nextIndex = lastToneIndex }
+        -- keep looking if the "last inserted" tone was already removed
+        if Dict.member lastToneIndex collection.tones || lastToneIndex < 1 then
+            { collection | tones = dictWithoutLastTone, nextIndex = correctedNextIndex }
+        else
+            removeToneInCollection { collection | nextIndex = correctedNextIndex }
+
+
+removeSpecificToneInCollection : Index -> ToneCollection -> ToneCollection
+removeSpecificToneInCollection i collection =
+    { collection | tones = Dict.remove i collection.tones }
 
 
 updateToneInCollection : Index -> (Tone -> Tone) -> ToneCollection -> ToneCollection
 updateToneInCollection i f collection =
-    { collection | tones = Dict.update i (Maybe.map f) collection.tones }
+    let
+        correctedNextIndex =
+            if i == collection.nextIndex - 1 then
+                collection.nextIndex - 1
+            else
+                collection.nextIndex
+    in
+        { collection | tones = Dict.update i (Maybe.map f) collection.tones, nextIndex = correctedNextIndex }
+
+
+toneCollectionToDict : ToneCollection -> Dict Index Tone
+toneCollectionToDict =
+    .tones
 
 
 
@@ -76,6 +100,11 @@ updateToneInCollection i f collection =
 
 type alias Model =
     { tones : ToneCollection, playing : Bool }
+
+
+numTones : Model -> Int
+numTones model =
+    model.tones |> toneCollectionToDict |> Dict.size
 
 
 emptyModel : Model
