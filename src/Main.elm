@@ -1,58 +1,15 @@
 module Main exposing (..)
 
-import Html exposing (..)
+import Html
+import Model exposing (emptyModel)
+import Update exposing (update)
+import View exposing (view)
 
 
 main =
     Html.program
-        { init = init
+        { init = ( emptyModel, Cmd.none )
         , view = view
         , update = update
-        , subscriptions = subscriptions
+        , subscriptions = \model -> Sub.none
         }
-
-
-
--- model
-
-
-type alias Model =
-    Int
-
-
-init : ( Model, Cmd Msg )
-init =
-    ( 0, Cmd.none )
-
-
-
--- update
-
-
-type Msg
-    = NoOp
-    | Message2
-    | Message3
-
-
-update : Msg -> Model -> ( Model, Cmd Msg )
-update _ _ =
-    ( 0, Cmd.none )
-
-
-
--- view
-
-
-view : Model -> Html Msg
-view _ =
-    text "Hello, world!"
-
-
-
--- subscriptions
-
-
-subscriptions : Model -> Sub Msg
-subscriptions model =
-    Sub.none
