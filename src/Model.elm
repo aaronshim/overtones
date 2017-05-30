@@ -26,24 +26,11 @@ emptyTone =
 
 
 
--- I saw this pattern on https://github.com/Olical/elm-guide/blob/master/src/CounterList.elm
-
-
-type alias IndexedTone =
-    { index : Index, tone : Tone }
-
-
-emptyToneWithIndex : Index -> IndexedTone
-emptyToneWithIndex i =
-    IndexedTone i emptyTone
-
-
-
 -- wrap up the internal collection of tones with the next available index cached
 
 
 type alias ToneCollection =
-    { tones : Dict Index IndexedTone, nextIndex : Index }
+    { tones : Dict Index Tone, nextIndex : Index }
 
 
 addToneToCollection : ToneCollection -> ToneCollection
@@ -53,7 +40,7 @@ addToneToCollection collection =
             collection.nextIndex
 
         dictWithNewTone =
-            Dict.insert newToneIndex (emptyToneWithIndex newToneIndex) collection.tones
+            Dict.insert newToneIndex emptyTone collection.tones
     in
         { collection | tones = dictWithNewTone, nextIndex = newToneIndex + 1 }
 
@@ -72,14 +59,7 @@ removeToneInCollection collection =
 
 updateToneInCollection : Index -> (Tone -> Tone) -> ToneCollection -> ToneCollection
 updateToneInCollection i f collection =
-    let
-        indexedToneUpdateFunction =
-            (Maybe.map (\it -> { it | tone = f it.tone }))
-
-        updatedDict =
-            Dict.update i indexedToneUpdateFunction collection.tones
-    in
-        { collection | tones = updatedDict }
+    { collection | tones = Dict.update i (Maybe.map f) collection.tones }
 
 
 
