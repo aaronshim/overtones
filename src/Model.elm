@@ -74,11 +74,6 @@ removeToneInCollection collection =
 
 removeSpecificToneInCollection : Index -> ToneCollection -> ToneCollection
 removeSpecificToneInCollection i collection =
-    { collection | tones = Dict.remove i collection.tones }
-
-
-updateToneInCollection : Index -> (Tone -> Tone) -> ToneCollection -> ToneCollection
-updateToneInCollection i f collection =
     let
         correctedNextIndex =
             if i == collection.nextIndex - 1 then
@@ -86,7 +81,12 @@ updateToneInCollection i f collection =
             else
                 collection.nextIndex
     in
-        { collection | tones = Dict.update i (Maybe.map f) collection.tones, nextIndex = correctedNextIndex }
+        { collection | tones = Dict.remove i collection.tones, nextIndex = correctedNextIndex }
+
+
+updateToneInCollection : Index -> (Tone -> Tone) -> ToneCollection -> ToneCollection
+updateToneInCollection i f collection =
+    { collection | tones = Dict.update i (Maybe.map f) collection.tones }
 
 
 toneCollectionToDict : ToneCollection -> Dict Index Tone
