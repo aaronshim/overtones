@@ -12,17 +12,25 @@ type alias Index =
     Int
 
 
+type alias Frequency =
+    Float
+
+
+type alias Volume =
+    Float
+
+
 
 -- our fundamental atomic unit for every wave
 
 
 type alias Tone =
-    { freq : Float, waveType : WaveType, strength : Float, playing : Bool }
+    { freq : Frequency, waveType : WaveType, volume : Volume, playing : Bool }
 
 
 emptyTone : Tone
 emptyTone =
-    { freq = 440.0, waveType = SineWave, strength = 1.0, playing = True }
+    { freq = 440.0, waveType = SineWave, volume = 1.0, playing = True }
 
 
 

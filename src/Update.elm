@@ -12,8 +12,9 @@ type Msg
 
 
 type ToneMsg
-    = SetFreq Float
+    = SetFreq Frequency
     | SetWaveType WaveType
+    | SetVolume Volume
     | Play
     | Pause
 
@@ -49,6 +50,9 @@ updateTone msg tone =
 
         SetWaveType wt ->
             { tone | waveType = wt }
+
+        SetVolume v ->
+            { tone | volume = v }
 
         Play ->
             { tone | playing = True }
