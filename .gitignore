@@ -4,3 +4,4 @@ elm-stuff
 repl-temp-*
 # our built files
 elm.js
+styles.css

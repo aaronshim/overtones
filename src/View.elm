@@ -2,11 +2,21 @@ module View exposing (..)
 
 import Dict
 import Html exposing (..)
-import Html.Attributes exposing (checked, disabled, name, selected, type_, value)
+import Html.Attributes exposing (checked, disabled, name, selected, type_, value, style)
+import Html.CssHelpers
 import Html.Events exposing (onClick, onInput, on, targetValue)
 import Json.Decode
 import Model exposing (..)
 import Update exposing (..)
+import MainCss
+import CssSelectors
+
+
+-- to make our CSS work
+
+
+{ id, class, classList } =
+    Html.CssHelpers.withNamespace MainCss.namespace
 
 
 view : Model -> Html Msg
@@ -23,6 +33,14 @@ view model =
                      else
                         PlayAll
                     )
+                , Html.Attributes.class "button"
+                , class
+                    [ (if isPlaying then
+                        CssSelectors.PauseButton
+                       else
+                        CssSelectors.PlayButton
+                      )
+                    ]
                 ]
                 [ text
                     (if isPlaying then
@@ -32,10 +50,17 @@ view model =
                     )
                 ]
             , button
-                [ onClick AddTone ]
+                [ onClick AddTone
+                , Html.Attributes.class "button"
+                , class [ CssSelectors.UnstickyButton ]
+                ]
                 [ text "Add Tone" ]
             , button
-                [ onClick RemoveTone, disabled (numTones model < 1) ]
+                [ onClick RemoveTone
+                , disabled (numTones model < 1)
+                , Html.Attributes.class "button"
+                , class [ CssSelectors.UnstickyButton ]
+                ]
                 [ text "Remove Tone" ]
             , div []
                 (model.tones
