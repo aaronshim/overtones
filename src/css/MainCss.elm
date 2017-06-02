@@ -15,6 +15,8 @@ namespace =
 
 
 -- main stylesheet definition (to be exported for compilation in Stylesheets.elm)
+-- This is wher we collect all of the different modules' styles rules into the top-level
+-- structure before passing it off to the compilation step in Stylesheets.elm
 
 
 css : Stylesheet

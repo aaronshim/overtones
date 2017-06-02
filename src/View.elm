@@ -2,7 +2,7 @@ module View exposing (..)
 
 import Dict
 import Html exposing (..)
-import Html.Attributes exposing (checked, disabled, name, selected, type_, value, style)
+import Html.Attributes exposing (checked, disabled, name, selected, type_, value)
 import Html.CssHelpers
 import Html.Events exposing (onClick, onInput, on, targetValue)
 import Json.Decode
@@ -40,6 +40,7 @@ view model =
                        else
                         CssSelectors.PlayButton
                       )
+                    , CssSelectors.SmallButton
                     ]
                 ]
                 [ text
@@ -52,14 +53,14 @@ view model =
             , button
                 [ onClick AddTone
                 , Html.Attributes.class "button"
-                , class [ CssSelectors.UnstickyButton ]
+                , class [ CssSelectors.UnstickyButton, CssSelectors.SmallButton ]
                 ]
                 [ text "Add Tone" ]
             , button
                 [ onClick RemoveTone
                 , disabled (numTones model < 1)
                 , Html.Attributes.class "button"
-                , class [ CssSelectors.UnstickyButton ]
+                , class [ CssSelectors.UnstickyButton, CssSelectors.SmallButton ]
                 ]
                 [ text "Remove Tone" ]
             , div []
@@ -98,6 +99,15 @@ viewTone i tone =
                      else
                         Play
                     )
+                , Html.Attributes.class "button"
+                , class
+                    [ (if isPlaying then
+                        CssSelectors.PauseButton
+                       else
+                        CssSelectors.PlayButton
+                      )
+                    , CssSelectors.SmallButton
+                    ]
                 ]
                 [ text
                     (if isPlaying then
@@ -106,7 +116,12 @@ viewTone i tone =
                         "Play"
                     )
                 ]
-            , button [ onClick Remove ] [ text "Remove" ]
+            , button
+                [ onClick Remove
+                , Html.Attributes.class "button"
+                , class [ CssSelectors.UnstickyButton, CssSelectors.SmallButton ]
+                ]
+                [ text "Remove" ]
             , selectPicker
                 (\s ->
                     case s of

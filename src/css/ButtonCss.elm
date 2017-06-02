@@ -11,7 +11,7 @@ import CssSelectors exposing (CssClasses(..), CssIds(..))
 
 buttonRules : Css.Snippet
 buttonRules =
-    button [ playButtonRules, pauseButtonRules, unstickyRules ]
+    button [ playButtonRules, pauseButtonRules, unstickyRules, smallButtonRules ]
 
 
 
@@ -53,4 +53,18 @@ unstickyMilligramButton classSelector color =
         colorReset =
             [ backgroundColor color, borderColor color ]
     in
-        colorReset |> (::) (unstuck colorReset) |> withClass classSelector
+        (margin (Css.rem 0.2)) :: (unstuck colorReset) :: colorReset |> withClass classSelector
+
+
+
+-- our custom size button (lifted from the Milligram.io examples page)
+
+
+smallButtonRules : Css.Mixin
+smallButtonRules =
+    withClass SmallButton
+        [ fontSize (Css.rem 0.8)
+        , height (Css.rem 2.8)
+        , lineHeight (Css.rem 2.8)
+        , padding2 zero (Css.rem 1.5)
+        ]

@@ -7,6 +7,7 @@ type CssClasses
     = PlayButton
     | PauseButton
     | UnstickyButton
+    | SmallButton
 
 
 type CssIds
