@@ -7,6 +7,7 @@ import Model exposing (..)
 import Update exposing (..)
 import CssSelectors
 import Helpers exposing (id, class, classList, selectPicker)
+import Collection exposing (Index)
 
 
 -- most atomic composable unit of the view that is responsible for each wave
@@ -16,7 +17,7 @@ viewTone : Index -> Tone -> Html ToneMsg
 viewTone i tone =
     let
         isPlaying =
-            tone.playing
+            tone.playing == Playing
     in
         div []
             [ button

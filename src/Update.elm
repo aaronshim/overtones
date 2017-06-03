@@ -1,14 +1,41 @@
 module Update exposing (..)
 
+import Rocket exposing ((=>))
 import Model exposing (..)
+import Collection exposing (Index)
+
+
+-- This is the shared commands that any collection or collection of collection of tones should respond to (for reuse)
+
+
+type CollectionMsg
+    = Add
+    | RemoveLast
+    | PlayAll
+    | PauseAll
+
+
+
+-- Top-level model messages (collection of collections of tones)
 
 
 type Msg
-    = AddTone
-    | RemoveTone
-    | PlayAll
-    | PauseAll
+    = TopLevel CollectionMsg
+    | ModifyToneCollection Index ToneCollectionMsg
+
+
+
+-- ToneCollection model messages (collection of tones)
+
+
+type ToneCollectionMsg
+    = ToneCollectionLevel CollectionMsg
+    | RemoveToneCollection
     | ModifyTone Index ToneMsg
+
+
+
+-- Tone model messages (individual tone)
 
 
 type ToneMsg
@@ -20,61 +47,87 @@ type ToneMsg
     | Remove
 
 
-update : Msg -> Model -> ( Model, Cmd Msg )
+
+-- Update functions for each of our three levels
+
+
+update : Msg -> Model -> ( Model, List (Cmd Msg) )
 update msg model =
-    let
-        updatedModel =
-            case msg of
-                AddTone ->
-                    { model | tones = addToneToCollection model.tones }
+    case msg of
+        TopLevel Add ->
+            addToneCollection model => []
 
-                RemoveTone ->
-                    { model | tones = removeToneInCollection model.tones }
+        TopLevel RemoveLast ->
+            removeToneCollection model => []
 
-                PlayAll ->
-                    { model | playing = True }
+        TopLevel PlayAll ->
+            { model | context = Playing } => []
 
-                PauseAll ->
-                    { model | playing = False }
+        TopLevel PauseAll ->
+            { model | context = Paused } => []
 
-                ModifyTone i Remove ->
-                    -- sorry but we have to special case this
-                    { model | tones = removeSpecificToneInCollection i model.tones }
+        ModifyToneCollection i RemoveToneCollection ->
+            removeSpecificToneCollection i model => []
 
-                ModifyTone i toneMsg ->
-                    { model | tones = updateToneInCollection i (updateTone toneMsg) model.tones }
-    in
-        ( updatedModel, Cmd.none )
+        ModifyToneCollection i collectionMsg ->
+            updateToneCollectionInModel i (updateToneCollection collectionMsg) model => []
+
+
+updateToneCollection : ToneCollectionMsg -> ToneCollection -> ToneCollection
+updateToneCollection msg model =
+    case msg of
+        ToneCollectionLevel Add ->
+            addToneToCollection model
+
+        ToneCollectionLevel RemoveLast ->
+            removeToneInCollection model
+
+        ToneCollectionLevel PlayAll ->
+            { model | context = Playing }
+
+        ToneCollectionLevel PauseAll ->
+            { model | context = Paused }
+
+        ModifyTone i Remove ->
+            -- replace with better parent-child communications for refactoring
+            removeSpecificToneInCollection i model
+
+        ModifyTone i toneMsg ->
+            updateToneInCollection i (updateTone toneMsg) model
+
+        RemoveToneCollection ->
+            -- replace with better parent-child communications for refactoring
+            model
 
 
 updateTone : ToneMsg -> Tone -> Tone
-updateTone msg tone =
+updateTone msg model =
     case msg of
         SetFreq freqStr ->
             case String.toFloat freqStr of
                 Ok f ->
-                    { tone | freq = f }
+                    { model | freq = f }
 
                 _ ->
-                    tone
+                    model
 
         SetWaveType wt ->
-            { tone | waveType = wt }
+            { model | waveType = wt }
 
         SetVolume volStr ->
             case String.toFloat volStr of
                 Ok v ->
-                    { tone | volume = v }
+                    { model | volume = v }
 
                 _ ->
-                    tone
+                    model
 
         Play ->
-            { tone | playing = True }
+            { model | playing = Playing }
 
         Pause ->
-            { tone | playing = False }
+            { model | playing = Paused }
 
-        _ ->
-            -- Remove and possibly other NoOp cases
-            tone
+        Remove ->
+            -- replace with better parent-child communications for refactoring
+            model
