@@ -5,7 +5,8 @@
     "license": "MIT",
     "source-directories": [
         "src",
-        "src/css"
+        "src/css",
+        "src/views"
     ],
     "exposed-modules": [],
     "dependencies": {
