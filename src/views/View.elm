@@ -9,6 +9,7 @@ import Update exposing (..)
 import CssSelectors
 import Tone exposing (viewTone)
 import Helpers exposing (id, class, classList)
+import Collection
 
 
 view : Model -> Html Msg
@@ -57,7 +58,7 @@ view model =
                 [ text "Remove Tone" ]
             , div []
                 (model.tones
-                    |> toneCollectionToDict
+                    |> Collection.toDict
                     |> Dict.map viewToneWithIndex
                     |> Dict.values
                 )

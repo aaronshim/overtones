@@ -1,6 +1,7 @@
 module Model exposing (..)
 
 import Dict exposing (Dict)
+import Collection exposing (Collection, Index)
 
 
 type WaveType
@@ -38,60 +39,27 @@ emptyTone =
 
 
 type alias ToneCollection =
-    { tones : Dict Index Tone, nextIndex : Index }
+    Collection Tone
 
 
 addToneToCollection : ToneCollection -> ToneCollection
-addToneToCollection collection =
-    let
-        newToneIndex =
-            collection.nextIndex
-
-        dictWithNewTone =
-            Dict.insert newToneIndex emptyTone collection.tones
-    in
-        { collection | tones = dictWithNewTone, nextIndex = newToneIndex + 1 }
+addToneToCollection =
+    Collection.insert emptyTone
 
 
 removeToneInCollection : ToneCollection -> ToneCollection
-removeToneInCollection collection =
-    let
-        lastToneIndex =
-            collection.nextIndex - 1
-
-        dictWithoutLastTone =
-            Dict.remove lastToneIndex collection.tones
-
-        correctedNextIndex =
-            max 0 lastToneIndex
-    in
-        -- keep looking if the "last inserted" tone was already removed
-        if Dict.member lastToneIndex collection.tones || lastToneIndex < 1 then
-            { collection | tones = dictWithoutLastTone, nextIndex = correctedNextIndex }
-        else
-            removeToneInCollection { collection | nextIndex = correctedNextIndex }
+removeToneInCollection =
+    Collection.removeLastInserted
 
 
 removeSpecificToneInCollection : Index -> ToneCollection -> ToneCollection
-removeSpecificToneInCollection i collection =
-    let
-        correctedNextIndex =
-            if i == collection.nextIndex - 1 then
-                collection.nextIndex - 1
-            else
-                collection.nextIndex
-    in
-        { collection | tones = Dict.remove i collection.tones, nextIndex = correctedNextIndex }
+removeSpecificToneInCollection =
+    Collection.remove
 
 
 updateToneInCollection : Index -> (Tone -> Tone) -> ToneCollection -> ToneCollection
-updateToneInCollection i f collection =
-    { collection | tones = Dict.update i (Maybe.map f) collection.tones }
-
-
-toneCollectionToDict : ToneCollection -> Dict Index Tone
-toneCollectionToDict =
-    .tones
+updateToneInCollection =
+    Collection.update
 
 
 
@@ -104,14 +72,11 @@ type alias Model =
 
 numTones : Model -> Int
 numTones model =
-    model.tones |> toneCollectionToDict |> Dict.size
+    model.tones |> Collection.toDict |> Dict.size
 
 
 emptyModel : Model
 emptyModel =
-    { tones =
-        { tones = Dict.empty
-        , nextIndex = 0
-        }
+    { tones = Collection.fromDict Dict.empty
     , playing = True
     }
