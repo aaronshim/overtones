@@ -1,10 +1,25 @@
--- Straight from the rtfeldman/elm-css repo to make elm-css compilation work
-
-
 port module Stylesheets exposing (..)
 
 import Css.File exposing (CssFileStructure, CssCompilerProgram)
-import MainCss
+import Css exposing (Stylesheet, stylesheet)
+import Css.Namespace
+import CssSelectors exposing (namespace)
+import ButtonCss exposing (buttonRules)
+
+
+-- main stylesheet definition (to be exported for compilation in Stylesheets.elm)
+-- This is wher we collect all of the different modules' styles rules into the top-level
+-- structure before passing it off to the compilation step in Stylesheets.elm
+
+
+css : Stylesheet
+css =
+    (stylesheet << Css.Namespace.namespace namespace)
+        [ buttonRules ]
+
+
+
+-- This is where we run the compilation to a .css file
 
 
 port files : CssFileStructure -> Cmd msg
@@ -13,7 +28,7 @@ port files : CssFileStructure -> Cmd msg
 fileStructure : CssFileStructure
 fileStructure =
     Css.File.toFileStructure
-        [ ( "styles.css", Css.File.compile [ MainCss.css ] ) ]
+        [ ( "styles.css", Css.File.compile [ css ] ) ]
 
 
 main : CssCompilerProgram

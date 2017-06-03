@@ -8,7 +8,6 @@ import Html.Events exposing (onClick, onInput, on, targetValue)
 import Json.Decode
 import Model exposing (..)
 import Update exposing (..)
-import MainCss
 import CssSelectors
 
 
@@ -16,7 +15,7 @@ import CssSelectors
 
 
 { id, class, classList } =
-    Html.CssHelpers.withNamespace MainCss.namespace
+    Html.CssHelpers.withNamespace CssSelectors.namespace
 
 
 view : Model -> Html Msg
