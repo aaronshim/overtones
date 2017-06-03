@@ -21,8 +21,8 @@
     "webpack-dev-server": "^2.4.5"
   },
   "scripts": {
-    "build": "webpack",
+    "build": "yarn install && elm-make --yes && webpack",
     "start": "webpack-dev-server --port 3000",
-    "clean": "rm -rf node_modules/ elm-stuff/ dist/"
+    "purge": "rm -rf node_modules/ elm-stuff/ dist/"
   }
 }
