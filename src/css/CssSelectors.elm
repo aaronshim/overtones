@@ -17,6 +17,8 @@ type CssClasses
     | PauseButton
     | UnstickyButton
     | SmallButton
+    | ToneCollection
+    | Tone
 
 
 type CssIds

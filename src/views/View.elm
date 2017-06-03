@@ -18,7 +18,7 @@ view model =
         isPlaying =
             model.context == Playing
     in
-        div [] <|
+        div [ Html.Attributes.class "container" ] <|
             (++)
                 [ button
                     [ onClick

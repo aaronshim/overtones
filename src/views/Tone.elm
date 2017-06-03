@@ -19,70 +19,72 @@ viewTone i tone =
         isPlaying =
             tone.playing == Playing
     in
-        div []
-            [ button
-                [ onClick
-                    (if isPlaying then
-                        Pause
-                     else
-                        Play
-                    )
-                , Html.Attributes.class "button"
-                , class
-                    [ (if isPlaying then
-                        CssSelectors.PauseButton
-                       else
-                        CssSelectors.PlayButton
-                      )
-                    , CssSelectors.SmallButton
+        div [ Html.Attributes.class "column" ]
+            [ div [ class [ CssSelectors.Tone ] ]
+                [ button
+                    [ onClick
+                        (if isPlaying then
+                            Pause
+                         else
+                            Play
+                        )
+                    , Html.Attributes.class "button"
+                    , class
+                        [ (if isPlaying then
+                            CssSelectors.PauseButton
+                           else
+                            CssSelectors.PlayButton
+                          )
+                        , CssSelectors.SmallButton
+                        ]
                     ]
-                ]
-                [ text
-                    (if isPlaying then
-                        "Pause"
-                     else
-                        "Play"
-                    )
-                ]
-            , button
-                [ onClick Remove
-                , Html.Attributes.class "button"
-                , class [ CssSelectors.UnstickyButton, CssSelectors.SmallButton ]
-                ]
-                [ text "Remove" ]
-            , selectPicker
-                (\s ->
-                    case s of
-                        "Sawtooth" ->
-                            SetWaveType SawtoothWave
+                    [ text
+                        (if isPlaying then
+                            "Pause"
+                         else
+                            "Play"
+                        )
+                    ]
+                , button
+                    [ onClick Remove
+                    , Html.Attributes.class "button"
+                    , class [ CssSelectors.UnstickyButton, CssSelectors.SmallButton ]
+                    ]
+                    [ text "Remove" ]
+                , selectPicker
+                    (\s ->
+                        case s of
+                            "Sawtooth" ->
+                                SetWaveType SawtoothWave
 
-                        _ ->
-                            SetWaveType SineWave
-                )
-                [ ( "Sine", tone.waveType == SineWave )
-                , ( "Sawtooth", tone.waveType == SawtoothWave )
-                ]
-            , label []
-                [ input
-                    [ type_ "range"
-                    , Html.Attributes.min "220"
-                    , Html.Attributes.max "880"
-                    , onInput SetFreq
-                    , tone.freq |> toString |> value
+                            _ ->
+                                SetWaveType SineWave
+                    )
+                    [ ( "Sine", tone.waveType == SineWave )
+                    , ( "Sawtooth", tone.waveType == SawtoothWave )
                     ]
-                    []
-                , text ("Frequency: " ++ (toString tone.freq))
-                ]
-            , label []
-                [ input
-                    [ type_ "range"
-                    , Html.Attributes.min "0.0"
-                    , Html.Attributes.max "1.0"
-                    , Html.Attributes.step "0.01"
-                    , onInput SetVolume
-                    , tone.volume |> toString |> value
+                , label []
+                    [ input
+                        [ type_ "range"
+                        , Html.Attributes.min "220"
+                        , Html.Attributes.max "880"
+                        , onInput SetFreq
+                        , tone.freq |> toString |> value
+                        ]
+                        []
+                    , text ("Frequency: " ++ (toString tone.freq))
                     ]
-                    []
-                , text ("Volume: " ++ (toString tone.volume))
+                , label []
+                    [ input
+                        [ type_ "range"
+                        , Html.Attributes.min "0.0"
+                        , Html.Attributes.max "1.0"
+                        , Html.Attributes.step "0.01"
+                        , onInput SetVolume
+                        , tone.volume |> toString |> value
+                        ]
+                        []
+                    , text ("Volume: " ++ (toString tone.volume))
+                    ]
                 ]
             ]

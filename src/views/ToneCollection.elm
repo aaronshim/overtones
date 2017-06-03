@@ -18,51 +18,53 @@ viewToneCollection model =
         isPlaying =
             model.context == Playing
     in
-        div []
-            [ button
-                [ onClick
-                    (if isPlaying then
-                        ToneCollectionLevel PauseAll
-                     else
-                        ToneCollectionLevel PlayAll
-                    )
-                , Html.Attributes.class "button"
-                , class
-                    [ (if isPlaying then
-                        CssSelectors.PauseButton
-                       else
-                        CssSelectors.PlayButton
-                      )
-                    , CssSelectors.SmallButton
+        div [ class [ CssSelectors.ToneCollection ], Html.Attributes.class "row" ]
+            [ div [ Html.Attributes.class "row" ]
+                [ button
+                    [ onClick
+                        (if isPlaying then
+                            ToneCollectionLevel PauseAll
+                         else
+                            ToneCollectionLevel PlayAll
+                        )
+                    , Html.Attributes.class "button"
+                    , class
+                        [ (if isPlaying then
+                            CssSelectors.PauseButton
+                           else
+                            CssSelectors.PlayButton
+                          )
+                        , CssSelectors.SmallButton
+                        ]
                     ]
+                    [ text
+                        (if isPlaying then
+                            "Pause"
+                         else
+                            "Play"
+                        )
+                    ]
+                , button
+                    [ onClick (ToneCollectionLevel Add)
+                    , Html.Attributes.class "button"
+                    , class [ CssSelectors.UnstickyButton, CssSelectors.SmallButton ]
+                    ]
+                    [ text "Add Tone" ]
+                , button
+                    [ onClick (ToneCollectionLevel RemoveLast)
+                    , disabled (numTones model < 1)
+                    , Html.Attributes.class "button"
+                    , class [ CssSelectors.UnstickyButton, CssSelectors.SmallButton ]
+                    ]
+                    [ text "Remove Tone" ]
+                , button
+                    [ onClick RemoveToneCollection
+                    , Html.Attributes.class "button"
+                    , class [ CssSelectors.UnstickyButton, CssSelectors.SmallButton ]
+                    ]
+                    [ text "Remove" ]
                 ]
-                [ text
-                    (if isPlaying then
-                        "Pause"
-                     else
-                        "Play"
-                    )
-                ]
-            , button
-                [ onClick (ToneCollectionLevel Add)
-                , Html.Attributes.class "button"
-                , class [ CssSelectors.UnstickyButton, CssSelectors.SmallButton ]
-                ]
-                [ text "Add Tone" ]
-            , button
-                [ onClick (ToneCollectionLevel RemoveLast)
-                , disabled (numTones model < 1)
-                , Html.Attributes.class "button"
-                , class [ CssSelectors.UnstickyButton, CssSelectors.SmallButton ]
-                ]
-                [ text "Remove Tone" ]
-            , button
-                [ onClick RemoveToneCollection
-                , Html.Attributes.class "button"
-                , class [ CssSelectors.UnstickyButton, CssSelectors.SmallButton ]
-                ]
-                [ text "Remove" ]
-            , div []
+            , div [ Html.Attributes.class "row" ]
                 (model
                     |> Collection.toDict
                     |> Dict.map viewToneWithIndex
