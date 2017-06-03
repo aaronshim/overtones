@@ -8,22 +8,25 @@ The eventual goal is to make this product platform-agnostic by wrapping it in El
 ## How to get started
 0. Make sure you have Node and NPM installed.
 
-1. Install Elm
+1. Install dependencies
     
-        npm install -g elm
+        npm install -g yarn
+        yarn install
 
 ### (with building and running)
 
-2. Run the `Makefile` (`make`)
+2. Run the build
 
-3. Open `index.html` in a browser
+        yarn build
+
+3. Open `dist/index.html` in a browser. The entire contents of `dist/` are what you want to host.
 
 ### (with developing)
 
-2. Run `elm-reactor`
+2. Start the dev server with auto-building
 
-        elm-reactor
+        yarn start
 
-3. Open your browser to `localhost:8000` and click on `Main.elm` under the `src` folder to start the dev environment. Because ports do not work yet with `elm-reactor`, we won't get audio, but we can debug all the layers and play with the time-travelling debugger *except* for the Web Audio API interop layer.
+3. Open your browser to `localhost:3000`
 
 4. **(Optional)** Install VS Code (or your choice of text editor) with the VS Code [`elm` extension](https://github.com/Krzysztof-Cieslak/vscode-elm) (or the analogue for your text editor), along with the `elm-format` package (`npm install -g elm-format`) for a more robust IDE experience.
