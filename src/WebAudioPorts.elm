@@ -28,6 +28,9 @@ waveTypeToStr waveType =
         SawtoothWave ->
             "sawtooth"
 
+        SquareWave ->
+            "square"
+
 
 toToneRep : Tone -> ToneRep
 toToneRep { freq, waveType, volume, playing } =

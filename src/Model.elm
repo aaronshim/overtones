@@ -7,6 +7,7 @@ import Collection exposing (Collection, CollectionWithContext, Index)
 type WaveType
     = SineWave
     | SawtoothWave
+    | SquareWave
 
 
 type alias Frequency =

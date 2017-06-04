@@ -57,11 +57,15 @@ viewTone i tone =
                             "Sawtooth" ->
                                 SetWaveType SawtoothWave
 
+                            "Square" ->
+                                SetWaveType SquareWave
+
                             _ ->
                                 SetWaveType SineWave
                     )
                     [ ( "Sine", tone.waveType == SineWave )
                     , ( "Sawtooth", tone.waveType == SawtoothWave )
+                    , ( "Square", tone.waveType == SquareWave )
                     ]
                 , label []
                     [ input
