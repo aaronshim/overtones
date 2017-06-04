@@ -3,6 +3,7 @@ module Update exposing (..)
 import Rocket exposing ((=>))
 import Model exposing (..)
 import Collection exposing (Index)
+import WebAudioPorts exposing (modelToRep, controlAudioApi)
 
 
 -- This is the shared commands that any collection or collection of collection of tones should respond to (for reuse)
@@ -53,24 +54,29 @@ type ToneMsg
 
 update : Msg -> Model -> ( Model, List (Cmd Msg) )
 update msg model =
-    case msg of
-        TopLevel Add ->
-            addToneCollection model => []
+    -- switch this back to Rocket syntax if we ever need more specific Cmd chained
+    let
+        newModel =
+            case msg of
+                TopLevel Add ->
+                    addToneCollection model
 
-        TopLevel RemoveLast ->
-            removeToneCollection model => []
+                TopLevel RemoveLast ->
+                    removeToneCollection model
 
-        TopLevel PlayAll ->
-            { model | context = Playing } => []
+                TopLevel PlayAll ->
+                    { model | context = Playing }
 
-        TopLevel PauseAll ->
-            { model | context = Paused } => []
+                TopLevel PauseAll ->
+                    { model | context = Paused }
 
-        ModifyToneCollection i RemoveToneCollection ->
-            removeSpecificToneCollection i model => []
+                ModifyToneCollection i RemoveToneCollection ->
+                    removeSpecificToneCollection i model
 
-        ModifyToneCollection i collectionMsg ->
-            updateToneCollectionInModel i (updateToneCollection collectionMsg) model => []
+                ModifyToneCollection i collectionMsg ->
+                    updateToneCollectionInModel i (updateToneCollection collectionMsg) model
+    in
+        newModel => [ controlAudioApi <| modelToRep newModel ]
 
 
 updateToneCollection : ToneCollectionMsg -> ToneCollection -> ToneCollection
