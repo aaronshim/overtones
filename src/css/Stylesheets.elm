@@ -5,7 +5,7 @@ import Css exposing (Stylesheet, stylesheet)
 import Css.Namespace
 import CssSelectors exposing (namespace)
 import ButtonCss exposing (buttonRules)
-import ToneCss exposing (toneRules)
+import ToneCss exposing (toneRules, toneInputRowRules, toneButtonRowRules, toneInputRules)
 import ToneCollectionCss exposing (toneCollectionRules)
 
 
@@ -17,7 +17,13 @@ import ToneCollectionCss exposing (toneCollectionRules)
 css : Stylesheet
 css =
     (stylesheet << Css.Namespace.namespace namespace)
-        [ buttonRules, toneCollectionRules, toneRules ]
+        [ buttonRules
+        , toneCollectionRules
+        , toneRules
+        , toneInputRowRules
+        , toneButtonRowRules
+        , toneInputRules
+        ]
 
 
 

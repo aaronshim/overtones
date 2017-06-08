@@ -1,12 +1,12 @@
-module Tone exposing (..)
+module Tone exposing (viewTone)
 
 import Html exposing (..)
 import Html.Attributes exposing (type_, value)
-import Html.Events exposing (onClick, onInput)
+import Html.Events exposing (onClick, onInput, onBlur)
 import Model exposing (..)
 import Update exposing (..)
 import CssSelectors
-import Helpers exposing (id, class, classList, selectPicker)
+import Helpers exposing (id, class, classList, selectPicker, onBlurWithTargetValue)
 import Collection exposing (Index)
 
 
@@ -15,80 +15,155 @@ import Collection exposing (Index)
 
 viewTone : Index -> Tone -> Html ToneMsg
 viewTone i tone =
+    div [ class [ CssSelectors.Tone ] ]
+        [ viewToneButtonRow tone
+        , viewFrequencyRow tone
+        , viewWaveTypeRow tone
+        , viewVolumeRow tone
+        ]
+
+
+
+-- The first row with the "Play" and "Remove" buttons
+
+
+viewToneButtonRow : Tone -> Html ToneMsg
+viewToneButtonRow tone =
     let
         isPlaying =
             tone.playing == Playing
     in
-        div [ Html.Attributes.class "column" ]
-            [ div [ class [ CssSelectors.Tone ] ]
-                [ button
-                    [ onClick
-                        (if isPlaying then
-                            Pause
-                         else
-                            Play
-                        )
-                    , Html.Attributes.class "button"
-                    , class
-                        [ (if isPlaying then
-                            CssSelectors.PauseButton
-                           else
-                            CssSelectors.PlayButton
-                          )
-                        , CssSelectors.SmallButton
-                        ]
+        div [ class [ CssSelectors.ToneButtonRow ], Html.Attributes.class "row" ]
+            [ button
+                [ class
+                    [ CssSelectors.ToneInput
+                    , CssSelectors.ToneInputSizeInitial
                     ]
-                    [ text
-                        (if isPlaying then
-                            "Pause"
-                         else
-                            "Play"
-                        )
-                    ]
-                , button
-                    [ onClick Remove
-                    , Html.Attributes.class "button"
-                    , class [ CssSelectors.UnstickyButton, CssSelectors.SmallButton ]
-                    ]
-                    [ text "Remove" ]
-                , selectPicker
-                    (\s ->
-                        case s of
-                            "Sawtooth" ->
-                                SetWaveType SawtoothWave
-
-                            "Square" ->
-                                SetWaveType SquareWave
-
-                            _ ->
-                                SetWaveType SineWave
+                , onClick
+                    (if isPlaying then
+                        Pause
+                     else
+                        Play
                     )
-                    [ ( "Sine", tone.waveType == SineWave )
-                    , ( "Sawtooth", tone.waveType == SawtoothWave )
-                    , ( "Square", tone.waveType == SquareWave )
-                    ]
-                , label []
-                    [ input
-                        [ type_ "range"
-                        , Html.Attributes.min "220"
-                        , Html.Attributes.max "880"
-                        , onInput SetFreq
-                        , tone.freq |> toString |> value
-                        ]
-                        []
-                    , text ("Frequency: " ++ (toString tone.freq))
-                    ]
-                , label []
-                    [ input
-                        [ type_ "range"
-                        , Html.Attributes.min "0.0"
-                        , Html.Attributes.max "1.0"
-                        , Html.Attributes.step "0.01"
-                        , onInput SetVolume
-                        , tone.volume |> toString |> value
-                        ]
-                        []
-                    , text ("Volume: " ++ (toString tone.volume))
+                , Html.Attributes.class "button"
+                , class
+                    [ (if isPlaying then
+                        CssSelectors.PauseButton
+                       else
+                        CssSelectors.PlayButton
+                      )
+                    , CssSelectors.SmallButton
                     ]
                 ]
+                [ text
+                    (if isPlaying then
+                        "Pause"
+                     else
+                        "Play"
+                    )
+                ]
+            , button
+                [ class
+                    [ CssSelectors.ToneInput
+                    , CssSelectors.ToneInputRightJustified
+                    , CssSelectors.ToneInputSizeInitial
+                    ]
+                , onClick Remove
+                , Html.Attributes.class "button"
+                , class [ CssSelectors.UnstickyButton, CssSelectors.SmallButton ]
+                ]
+                [ text "Remove" ]
             ]
+
+
+
+-- Input collection for setting the frequency
+
+
+viewFrequencyRow : Tone -> Html ToneMsg
+viewFrequencyRow tone =
+    label []
+        [ text "Frequency"
+        , div [ class [ CssSelectors.ToneInputRow ], Html.Attributes.class "row" ]
+            [ input
+                [ class [ CssSelectors.ToneInput, CssSelectors.ToneInputWide ]
+                , type_ "number"
+                , onBlurWithTargetValue SetFreq
+                , tone.freq |> toString |> value
+                ]
+                []
+            , button
+                [ class
+                    [ CssSelectors.ToneInput
+                    , CssSelectors.SmallButton
+                    , CssSelectors.UnstickyButton
+                    ]
+                ]
+                [ text "+" ]
+            , button
+                [ class
+                    [ CssSelectors.ToneInput
+                    , CssSelectors.SmallButton
+                    , CssSelectors.UnstickyButton
+                    ]
+                ]
+                [ text "-" ]
+            ]
+        ]
+
+
+
+-- Input collection for setting the volume
+
+
+viewVolumeRow : Tone -> Html ToneMsg
+viewVolumeRow tone =
+    label []
+        [ text "Volume"
+        , div [ class [ CssSelectors.ToneInputRow ], Html.Attributes.class "row" ]
+            [ input
+                [ class [ CssSelectors.ToneInput ]
+                , type_ "number"
+                , onBlurWithTargetValue SetVolume
+                , tone.volume |> toString |> value
+                ]
+                []
+            , input
+                [ class [ CssSelectors.ToneInput, CssSelectors.ToneInputWide ]
+                , type_ "range"
+                , Html.Attributes.min "0.0"
+                , Html.Attributes.max "1.0"
+                , Html.Attributes.step "0.01"
+                , onInput SetVolume
+                , tone.volume |> toString |> value
+                ]
+                []
+            ]
+        ]
+
+
+
+-- Input collection for setting the wave type
+
+
+viewWaveTypeRow : Tone -> Html ToneMsg
+viewWaveTypeRow tone =
+    label []
+        [ text "Wave Type"
+        , selectPicker
+            (\s ->
+                case s of
+                    "Sawtooth" ->
+                        SetWaveType SawtoothWave
+
+                    "Square" ->
+                        SetWaveType SquareWave
+
+                    _ ->
+                        SetWaveType SineWave
+            )
+            [ ( "Sine", tone.waveType == SineWave )
+            , ( "Sawtooth", tone.waveType == SawtoothWave )
+            , ( "Square", tone.waveType == SquareWave )
+            ]
+        ]

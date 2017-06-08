@@ -40,3 +40,12 @@ selectPickerOption ( textValue, isSelected ) =
                 []
     in
         option ((value textValue) :: defaultSelect) [ text textValue ]
+
+
+
+-- onBlur by default does not let us pass along the value of the input like onInput does
+
+
+onBlurWithTargetValue : (String -> msg) -> Attribute msg
+onBlurWithTargetValue message =
+    on "blur" <| Json.Decode.map message targetValue

@@ -4,6 +4,7 @@ import Css exposing (..)
 import Css.Elements exposing (button)
 import Css.Colors
 import CssSelectors exposing (CssClasses(..), CssIds(..))
+import SharedCss exposing (..)
 
 
 -- This is going back to the main CSS module
@@ -29,7 +30,7 @@ unstuck =
 defaultMiligramButtonColor : Color
 defaultMiligramButtonColor =
     -- it's that purple
-    hex "9b4dca"
+    defaultColor
 
 
 unstickyRules : Css.Mixin
@@ -53,7 +54,7 @@ unstickyMilligramButton classSelector color =
         colorReset =
             [ backgroundColor color, borderColor color ]
     in
-        (margin (Css.rem 0.2)) :: (unstuck colorReset) :: colorReset |> withClass classSelector
+        (unstuck colorReset) :: colorReset |> withClass classSelector
 
 
 

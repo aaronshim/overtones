@@ -1,6 +1,7 @@
 module ToneCollectionCss exposing (..)
 
 import Css exposing (..)
+import Css.Colors
 import CssSelectors exposing (CssClasses(..), CssIds(..))
 
 
@@ -13,6 +14,6 @@ toneCollectionRules =
         [ padding (Css.px 5)
         , borderRadius (Css.px 5)
         , margin (Css.px 5)
-        , backgroundColor (hex "C7E8F3")
+        , border3 (px 1) solid Css.Colors.black
         , display inlineBlock
         ]

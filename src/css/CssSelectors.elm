@@ -19,6 +19,12 @@ type CssClasses
     | SmallButton
     | ToneCollection
     | Tone
+    | ToneButtonRow
+    | ToneInputRow
+    | ToneInput
+    | ToneInputWide
+    | ToneInputRightJustified
+    | ToneInputSizeInitial
 
 
 type CssIds
