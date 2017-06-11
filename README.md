@@ -11,7 +11,10 @@ The eventual goal is to make this product platform-agnostic by wrapping it in El
 1. Install dependencies
     
         npm install -g yarn
+        npm install -g elm
+        npm install -g elm-test
         yarn install
+        elm-make --yes
 
 ### (with building and running)
 
