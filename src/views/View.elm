@@ -14,12 +14,23 @@ import Collection exposing (Index)
 
 view : Model -> Html Msg
 view model =
+    main_ []
+        [ viewNavBar model
+        , viewMainContent model
+        ]
+
+
+viewNavBar : Model -> Html Msg
+viewNavBar model =
     let
         isPlaying =
             model.context == Playing
     in
-        div [ Html.Attributes.class "container" ] <|
-            (++)
+        nav [ class [ CssSelectors.Navbar ] ]
+            [ h3 [ class [ CssSelectors.NavbarTitle ] ]
+                [ text "Overtones" ]
+            , div
+                [ Html.Attributes.class "row" ]
                 [ button
                     [ onClick
                         (if isPlaying then
@@ -58,9 +69,14 @@ view model =
                     ]
                     [ text "Remove Collection" ]
                 ]
-            <|
-                Dict.foldl (\i collection list -> (viewToneCollectionWithIndex i collection) :: list) [] <|
-                    Collection.toDict model
+            ]
+
+
+viewMainContent : Model -> Html Msg
+viewMainContent model =
+    div [ Html.Attributes.class "container", id CssSelectors.MainContent ] <|
+        Dict.foldl (\i collection list -> (viewToneCollectionWithIndex i collection) :: list) [] <|
+            Collection.toDict model
 
 
 

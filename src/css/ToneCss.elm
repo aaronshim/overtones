@@ -1,7 +1,6 @@
 module ToneCss exposing (..)
 
 import Css exposing (..)
-import Css.Colors
 import CssSelectors exposing (CssClasses(..), CssIds(..))
 import SharedCss exposing (..)
 
@@ -14,7 +13,7 @@ toneRules =
     class Tone
         [ padding (Css.rem 1)
         , borderRadius (Css.px 5)
-        , border3 (px 1) solid Css.Colors.black
+        , border3 (px 1) solid defaultBorderGray
         , margin (Css.rem 0.5)
         ]
 

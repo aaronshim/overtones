@@ -13,7 +13,9 @@ namespace =
 
 
 type CssClasses
-    = PlayButton
+    = Navbar
+    | NavbarTitle
+    | PlayButton
     | PauseButton
     | UnstickyButton
     | SmallButton
@@ -29,4 +31,4 @@ type CssClasses
 
 
 type CssIds
-    = Page
+    = MainContent

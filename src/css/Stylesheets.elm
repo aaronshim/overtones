@@ -4,6 +4,7 @@ import Css.File exposing (CssFileStructure, CssCompilerProgram)
 import Css exposing (Stylesheet, stylesheet)
 import Css.Namespace
 import CssSelectors exposing (namespace)
+import NavbarCss exposing (navbarRules, navbarNotMobileRules, navbarMobileRules, mainContentRules)
 import ButtonCss exposing (buttonRules)
 import ToneCss exposing (toneRules, toneSizeRules, toneInputRowRules, toneButtonRowRules, toneInputRules)
 import ToneCollectionCss exposing (toneCollectionRules, toneCollectionButtonRowRules)
@@ -17,7 +18,11 @@ import ToneCollectionCss exposing (toneCollectionRules, toneCollectionButtonRowR
 css : Stylesheet
 css =
     (stylesheet << Css.Namespace.namespace namespace)
-        [ buttonRules
+        [ navbarRules
+        , navbarNotMobileRules
+        , navbarMobileRules
+        , mainContentRules
+        , buttonRules
         , toneCollectionRules
         , toneCollectionButtonRowRules
         , toneRules

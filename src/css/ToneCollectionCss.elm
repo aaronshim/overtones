@@ -1,8 +1,8 @@
 module ToneCollectionCss exposing (..)
 
 import Css exposing (..)
-import Css.Colors
 import CssSelectors exposing (CssClasses(..), CssIds(..))
+import SharedCss exposing (defaultBorderGray)
 
 
 -- This is going back to the main CSS module
@@ -14,7 +14,7 @@ toneCollectionRules =
         [ padding2 Css.zero (Css.rem 1)
         , borderRadius (Css.px 5)
         , margin (Css.px 5)
-        , border3 (px 1) solid Css.Colors.black
+        , border3 (px 1) solid defaultBorderGray
         , display inlineBlock
         ]
 
