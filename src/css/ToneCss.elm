@@ -26,7 +26,7 @@ toneSizeRules : Css.Snippet
 toneSizeRules =
     onlyForNotMobile <|
         class Tone
-            [ minWidth (Css.rem 9)
+            [ flex3 (int 1) (int 1) (Css.rem 9)
             , maxWidth (Css.rem 25)
             ]
 

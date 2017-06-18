@@ -1,6 +1,7 @@
 module ToneCollectionCss exposing (..)
 
 import Css exposing (..)
+import Css.Elements exposing (div)
 import CssSelectors exposing (CssClasses(..), CssIds(..))
 import SharedCss exposing (defaultBorderGray)
 
@@ -16,6 +17,11 @@ toneCollectionRules =
         , margin (Css.px 5)
         , border3 (px 1) solid defaultBorderGray
         , display inlineBlock
+        , children
+            [ div
+                [ flexWrap wrap
+                ]
+            ]
         ]
 
 
