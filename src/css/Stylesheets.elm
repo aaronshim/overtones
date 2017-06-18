@@ -5,8 +5,8 @@ import Css exposing (Stylesheet, stylesheet)
 import Css.Namespace
 import CssSelectors exposing (namespace)
 import ButtonCss exposing (buttonRules)
-import ToneCss exposing (toneRules, toneInputRowRules, toneButtonRowRules, toneInputRules)
-import ToneCollectionCss exposing (toneCollectionRules)
+import ToneCss exposing (toneRules, toneSizeRules, toneInputRowRules, toneButtonRowRules, toneInputRules)
+import ToneCollectionCss exposing (toneCollectionRules, toneCollectionButtonRowRules)
 
 
 -- main stylesheet definition (to be exported for compilation in Stylesheets.elm)
@@ -19,7 +19,9 @@ css =
     (stylesheet << Css.Namespace.namespace namespace)
         [ buttonRules
         , toneCollectionRules
+        , toneCollectionButtonRowRules
         , toneRules
+        , toneSizeRules
         , toneInputRowRules
         , toneButtonRowRules
         , toneInputRules

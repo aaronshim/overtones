@@ -18,6 +18,7 @@ type CssClasses
     | UnstickyButton
     | SmallButton
     | ToneCollection
+    | ToneCollectionButtonRow
     | Tone
     | ToneButtonRow
     | ToneInputRow

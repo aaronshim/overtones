@@ -16,9 +16,20 @@ toneRules =
         , borderRadius (Css.px 5)
         , border3 (px 1) solid Css.Colors.black
         , margin (Css.rem 0.5)
-        , minWidth (Css.rem 9)
-        , maxWidth (Css.rem 25)
         ]
+
+
+
+-- divide this out because we only want this to be the case when responsively on a larger screen
+
+
+toneSizeRules : Css.Snippet
+toneSizeRules =
+    onlyForNotMobile <|
+        class Tone
+            [ minWidth (Css.rem 9)
+            , maxWidth (Css.rem 25)
+            ]
 
 
 

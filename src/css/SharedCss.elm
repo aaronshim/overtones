@@ -11,6 +11,11 @@ defaultColor =
     hex "9b4dca"
 
 
+defaultGray : Color
+defaultGray =
+    hex "606c76"
+
+
 
 -- These are to wrap around rules that we do not want to use for responsive layouts
 -- (It means we will just defer to the CSS framework-- so this should be only for layout rules)

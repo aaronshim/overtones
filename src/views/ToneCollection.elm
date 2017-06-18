@@ -19,7 +19,7 @@ viewToneCollection model =
             model.context == Playing
     in
         div [ class [ CssSelectors.ToneCollection ], Html.Attributes.class "row" ]
-            [ div [ Html.Attributes.class "row" ]
+            [ div [ class [ CssSelectors.ToneCollectionButtonRow ], Html.Attributes.class "row" ]
                 [ button
                     [ onClick
                         (if isPlaying then
