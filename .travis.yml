@@ -10,9 +10,10 @@ before_install:
 
 before_script:
   - elm-make --yes
+  - cd tests/ && elm-make --yes Example.elm && cd ..
+  - yarn build
 
 script:
-  - yarn build
   - yarn test
 
 deploy:

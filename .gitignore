@@ -6,3 +6,4 @@ repl-temp-*
 node_modules
 # our built files
 dist
+tests/index.html
