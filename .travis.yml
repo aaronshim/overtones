@@ -1,25 +1,52 @@
+sudo: false
+os:
+  - linux
+
 language: node_js
 node_js:
   - "--lts"
-cache: yarn
+
+cache:
+  yarn: true
+  directories:
+    - elm-stuff/build-artifacts
+    - elm-stuff/packages
+    - tests/elm-stuff/build-artifacts
+    - tests/elm-stuff/packages
+    - sysconfcpus
 
 before_install:
-  - npm install -g yarn
-  - npm install -g elm
-  - npm install -g elm-test
+  # For sysconfcpus
+  - echo -e "Host github.com\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config
+
+install:
+  - npm install -g yarn elm elm-test
+  # Faster compile on Travis.
+  - |
+    if [ ! -d sysconfcpus/bin ];
+    then
+      git clone https://github.com/obmarg/libsysconfcpus.git;
+      cd libsysconfcpus;
+      ./configure --prefix=$TRAVIS_BUILD_DIR/sysconfcpus;
+      make && make install;
+      cd ..;
+    fi
+  # Must manually specify this now that we are defining our own install procedure instead of the yarn default
+  - yarn
 
 before_script:
-  - elm-make --yes
-  - cd tests/ && elm-make --yes Example.elm && cd ..
-  - yarn build
+  - $TRAVIS_BUILD_DIR/sysconfcpus/bin/sysconfcpus -n 2 elm-make --yes
+  - cd tests/ && $TRAVIS_BUILD_DIR/sysconfcpus/bin/sysconfcpus -n 2 elm-make --yes Example.elm && cd ..
+  - $TRAVIS_BUILD_DIR/sysconfcpus/bin/sysconfcpus -n 2 yarn build
 
 script:
-  - yarn test
+  - $TRAVIS_BUILD_DIR/sysconfcpus/bin/sysconfcpus -n 2 yarn test
 
 deploy:
   provider: pages
   skip_cleanup: true
   local_dir: dist/
   github_token: $GITHUB_TOKEN
+  target_branch: gh-pages
   on:
-    branch: gh-pages
+    branch: master
