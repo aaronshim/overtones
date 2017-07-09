@@ -2,29 +2,82 @@ module CollectionTest exposing (..)
 
 import Test exposing (..)
 import Expect
-import Fuzz exposing (list, int, string, maybe, Fuzzer, conditional, tuple)
+import Fuzz exposing (char, list, int, intRange, string, maybe, Fuzzer, conditional, tuple, map, map3)
+import Char
 import Dict
 import Collection exposing (..)
 
 
--- Custom Fuzzer
+-- Custom Fuzzers
 
 
-notEmptyList : Fuzzer a -> Fuzzer (List a)
-notEmptyList fuzzer =
+allUppercaseString : Fuzzer String
+allUppercaseString =
+    allCaseString 'A' Char.isUpper
+
+
+allLowercaseString : Fuzzer String
+allLowercaseString =
+    allCaseString 'a' Char.isLower
+
+
+
+{- These fuzzers are to generate two subsets of strings that are mutually exclusive -}
+
+
+allCaseString : Char -> (Char -> Bool) -> Fuzzer String
+allCaseString defaultRightCaseChar isRightCase =
     conditional
         { retries = 10
-        , fallback = identity -- not the greatest, but what choice do we have?
+        , fallback = (\xs -> String.fromList [ defaultRightCaseChar ])
+        , condition = (\xs -> String.length xs > 0)
+        }
+        (map (String.filter isRightCase << String.fromList) <| notEmptyList defaultRightCaseChar char)
+
+
+notEmptyList : a -> Fuzzer a -> Fuzzer (List a)
+notEmptyList defaultValue fuzzer =
+    conditional
+        { retries = 10
+        , fallback = (\xs -> defaultValue :: xs)
         , condition = (\xs -> List.length xs > 0)
         }
         (list fuzzer)
+
+
+collection : Fuzzer a -> Fuzzer (Collection a)
+collection fuzzerA =
+    collectionWithContext fuzzerA (Fuzz.constant NoContext)
+
+
+collectionWithContext : Fuzzer a -> Fuzzer b -> Fuzzer (CollectionWithContext a b)
+collectionWithContext fuzzerA fuzzerB =
+    let
+        fuzzerElemsToInsert =
+            list fuzzerA
+
+        -- or maybe some better way to get indices that are likely?
+        fuzzerRemoveIndices =
+            list <| intRange 0 10
+
+        insertCollection elemsToInsert context =
+            List.foldl (\elem accm -> insert elem accm) (emptyCollectionWithContext context) elemsToInsert
+
+        makeCollection elemsToInsert context removeIndices =
+            List.foldl (\i accm -> (translateRemoveIndex accm i) accm) (insertCollection elemsToInsert context) removeIndices
+    in
+        map3 makeCollection fuzzerElemsToInsert fuzzerB fuzzerRemoveIndices
 
 
 
 -- Dealing with fuzzing a stream of manipulations on the Collection
 
 
-translateToInsertsAndRemoveLast : Maybe a -> (CollectionWithContext a b -> CollectionWithContext a b)
+type alias CollectionModificationFunction a b =
+    CollectionWithContext a b -> CollectionWithContext a b
+
+
+translateToInsertsAndRemoveLast : Maybe a -> CollectionModificationFunction a b
 translateToInsertsAndRemoveLast n =
     case n of
         Just n_ ->
@@ -34,17 +87,22 @@ translateToInsertsAndRemoveLast n =
             removeLastInserted
 
 
-translateToInsertsAndRemoveIndex : CollectionWithContext a b -> a -> Maybe Int -> (CollectionWithContext a b -> CollectionWithContext a b)
+translateToInsertsAndRemoveIndex : CollectionWithContext a b -> a -> Maybe Int -> CollectionModificationFunction a b
 translateToInsertsAndRemoveIndex collectionSoFar elemToInsert index =
     case index of
         Just index_ ->
-            if isValidIndex index_ collectionSoFar then
-                remove index_
-            else
-                removeLastInserted
+            translateRemoveIndex collectionSoFar index_
 
         Nothing ->
             insert elemToInsert
+
+
+translateRemoveIndex : CollectionWithContext a b -> Int -> CollectionModificationFunction a b
+translateRemoveIndex collectionSoFar index =
+    if isValidIndex index collectionSoFar then
+        remove index
+    else
+        removeLastInserted
 
 
 isJust : Maybe a -> Bool
@@ -85,18 +143,28 @@ collectionTests : Test
 collectionTests =
     describe "Collection module"
         [ describe "Multiple inserts on collection"
-            [ fuzz (list int) "Correct size after multiple inserts" <|
-                \xs ->
+            [ fuzz2 (collection int) (list int) "Correct size after multiple inserts" <|
+                \initialCollection xs ->
                     let
                         collectionAfterInsert =
-                            List.foldl (\x accm -> insert x accm) (emptyCollectionWithContext NoContext) xs
+                            List.foldl (\x accm -> insert x accm) initialCollection xs
+
+                        initialCollectionSize =
+                            Dict.size <| toDict initialCollection
+
+                        finalCollectionSize =
+                            Dict.size <| toDict collectionAfterInsert
                     in
-                        Expect.equal (List.length xs) (Dict.size <| toDict collectionAfterInsert)
-            , fuzz (notEmptyList string) "Correct inclusion after multiple inserts" <|
-                \xs ->
+                        Expect.equal (initialCollectionSize + List.length xs) finalCollectionSize
+
+            {- The initial collection must contain a mutually exclusive subset of the same type as the inserted elements to
+               make sure that the presence test doesn't test a preexisting element generated by a particularly lucky fuzzing.
+            -}
+            , fuzz2 (collection allUppercaseString) (notEmptyList "a" allLowercaseString) "Correct inclusion after multiple inserts" <|
+                \initialCollection xs ->
                     let
                         collectionAfterInsert =
-                            List.foldl (\x accm -> insert x accm) (emptyCollectionWithContext NoContext) xs
+                            List.foldl (\x accm -> insert x accm) initialCollection xs
                     in
                         Expect.all (List.map (\x collection -> Expect.true "The collection contains the item" <| contains x collection) xs) <| collectionAfterInsert
             ]
