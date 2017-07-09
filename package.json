@@ -24,6 +24,6 @@
     "build": "webpack",
     "start": "webpack-dev-server --port 3000",
     "purge": "rm -rf node_modules/ elm-stuff/ dist/",
-    "test": "elm-test"
+    "test": "elm-test tests/Tests.elm"
   }
 }
