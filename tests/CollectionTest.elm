@@ -1,4 +1,4 @@
-module Example exposing (..)
+module CollectionTest exposing (..)
 
 import Test exposing (..)
 import Expect
@@ -81,8 +81,8 @@ isValidIndex i collection =
     toDict collection |> Dict.keys |> List.member i
 
 
-suite : Test
-suite =
+collectionTests : Test
+collectionTests =
     describe "Collection module"
         [ describe "Multiple inserts on collection"
             [ fuzz (list int) "Correct size after multiple inserts" <|
