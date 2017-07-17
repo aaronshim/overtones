@@ -71,7 +71,7 @@ viewNavBar model =
 viewMainContent : Model -> Html Msg
 viewMainContent model =
     div [ Html.Attributes.class "container", id CssSelectors.MainContent ] <|
-        Dict.foldl (\i collection list -> (viewToneCollectionWithIndex i collection) :: list) [] <|
+        Dict.foldl (\i collection list -> (viewToneCollectionWithIndex model i collection) :: list) [] <|
             Collection.toDict model
 
 
@@ -79,6 +79,6 @@ viewMainContent model =
 -- wrap up the messages with the right index for the ToneCollectionLevel to TopLevel message conversion
 
 
-viewToneCollectionWithIndex : Index -> ToneCollection -> Html Msg
-viewToneCollectionWithIndex i collection =
-    Html.map (ModifyToneCollection i) <| viewToneCollection collection
+viewToneCollectionWithIndex : Model -> Index -> ToneCollection -> Html Msg
+viewToneCollectionWithIndex parentModel i collection =
+    Html.map (ModifyToneCollection i) <| viewToneCollection parentModel collection

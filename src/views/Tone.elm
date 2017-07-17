@@ -13,10 +13,10 @@ import Collection exposing (Index)
 -- most atomic composable unit of the view that is responsible for each wave
 
 
-viewTone : Index -> Tone -> Html ToneMsg
-viewTone i tone =
+viewTone : Model -> ToneCollection -> Index -> Tone -> Html ToneMsg
+viewTone pageModel parentModel i tone =
     div [ class [ CssSelectors.Tone ] ]
-        [ viewToneButtonRow tone
+        [ viewToneButtonRow pageModel parentModel tone
         , viewFrequencyRow tone
         , viewWaveTypeRow tone
         , viewVolumeRow tone
@@ -27,8 +27,8 @@ viewTone i tone =
 -- The first row with the "Play" and "Remove" buttons
 
 
-viewToneButtonRow : Tone -> Html ToneMsg
-viewToneButtonRow tone =
+viewToneButtonRow : Model -> ToneCollection -> Tone -> Html ToneMsg
+viewToneButtonRow pageModel parentModel tone =
     let
         isPlaying =
             tone.playing == Playing
@@ -45,6 +45,8 @@ viewToneButtonRow tone =
                      else
                         Play
                     )
+                , Html.Attributes.disabled
+                    (not (Model.isPlaying pageModel && Model.isPlaying parentModel))
                 , Html.Attributes.class "button"
                 , class
                     [ (if isPlaying then
