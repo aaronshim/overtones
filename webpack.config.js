@@ -10,7 +10,9 @@ module.exports = {
 
     // Replace our index.html
     plugins: [ new HtmlWebpackPlugin({
-        title: 'Overtones'
+        title: 'Overtones',
+        template: './src/index.ejs',
+        hash: true // browser cache busting
     }) ],
 
     module: {
