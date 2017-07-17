@@ -116,3 +116,17 @@ remove i collection =
 update : Index -> (a -> a) -> CollectionWithContext a b -> CollectionWithContext a b
 update i f collection =
     { collection | items = Dict.update i (Maybe.map f) collection.items }
+
+
+
+-- helpers
+
+
+contains : a -> CollectionWithContext a b -> Bool
+contains x collection =
+    toDict collection |> Dict.values |> List.member x
+
+
+isValidIndex : Int -> CollectionWithContext a b -> Bool
+isValidIndex i collection =
+    toDict collection |> Dict.keys |> List.member i
