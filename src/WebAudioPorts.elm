@@ -1,7 +1,7 @@
 port module WebAudioPorts exposing (..)
 
 import Dict
-import Model exposing (Tone, WaveType(..), PlayingContext(..), ToneCollection, Model)
+import Model exposing (Tone, WaveType(..), PlayingContext(..), ToneCollection, Model, isPlaying)
 import Collection
 
 
@@ -42,28 +42,34 @@ toToneRep { freq, waveType, volume, playing } =
 
 toneCollectionToRep : ToneCollection -> List ToneRep
 toneCollectionToRep collection =
-    Dict.foldl
-        (\_ tone accm ->
-            if tone.playing == Playing then
-                (toToneRep tone) :: accm
-            else
-                accm
-        )
+    if isPlaying collection then
+        Dict.foldl
+            (\_ tone accm ->
+                if tone.playing == Playing then
+                    (toToneRep tone) :: accm
+                else
+                    accm
+            )
+            []
+        <|
+            Collection.toDict collection
+    else
         []
-    <|
-        Collection.toDict collection
 
 
 modelToRep : Model -> List ToneRep
 modelToRep model =
-    Dict.foldl
-        (\_ collection accmList ->
-            accmList
-                ++ toneCollectionToRep collection
-        )
+    if isPlaying model then
+        Dict.foldl
+            (\_ collection accmList ->
+                accmList
+                    ++ toneCollectionToRep collection
+            )
+            []
+        <|
+            Collection.toDict model
+    else
         []
-    <|
-        Collection.toDict model
 
 
 

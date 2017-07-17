@@ -22,54 +22,50 @@ view model =
 
 viewNavBar : Model -> Html Msg
 viewNavBar model =
-    let
-        isPlaying =
-            model.context == Playing
-    in
-        nav [ class [ CssSelectors.Navbar ] ]
-            [ h3 [ class [ CssSelectors.NavbarTitle ] ]
-                [ text "Overtones" ]
-            , div
-                [ Html.Attributes.class "row" ]
-                [ button
-                    [ onClick
-                        (if isPlaying then
-                            TopLevel PauseAll
-                         else
-                            TopLevel PlayAll
-                        )
-                    , Html.Attributes.class "button"
-                    , class
-                        [ (if isPlaying then
-                            CssSelectors.PauseButton
-                           else
-                            CssSelectors.PlayButton
-                          )
-                        , CssSelectors.SmallButton
-                        ]
+    nav [ class [ CssSelectors.Navbar ] ]
+        [ h3 [ class [ CssSelectors.NavbarTitle ] ]
+            [ text "Overtones" ]
+        , div
+            [ Html.Attributes.class "row" ]
+            [ button
+                [ onClick
+                    (if isPlaying model then
+                        TopLevel PauseAll
+                     else
+                        TopLevel PlayAll
+                    )
+                , Html.Attributes.class "button"
+                , class
+                    [ (if isPlaying model then
+                        CssSelectors.PauseButton
+                       else
+                        CssSelectors.PlayButton
+                      )
+                    , CssSelectors.SmallButton
                     ]
-                    [ text
-                        (if isPlaying then
-                            "Pause"
-                         else
-                            "Play"
-                        )
-                    ]
-                , button
-                    [ onClick (TopLevel Add)
-                    , Html.Attributes.class "button"
-                    , class [ CssSelectors.UnstickyButton, CssSelectors.SmallButton ]
-                    ]
-                    [ text "Add Collection" ]
-                , button
-                    [ onClick (TopLevel RemoveLast)
-                    , disabled (numToneCollections model < 1)
-                    , Html.Attributes.class "button"
-                    , class [ CssSelectors.UnstickyButton, CssSelectors.SmallButton ]
-                    ]
-                    [ text "Remove Collection" ]
                 ]
+                [ text
+                    (if isPlaying model then
+                        "Pause"
+                     else
+                        "Play"
+                    )
+                ]
+            , button
+                [ onClick (TopLevel Add)
+                , Html.Attributes.class "button"
+                , class [ CssSelectors.UnstickyButton, CssSelectors.SmallButton ]
+                ]
+                [ text "Add Collection" ]
+            , button
+                [ onClick (TopLevel RemoveLast)
+                , disabled (numToneCollections model < 1)
+                , Html.Attributes.class "button"
+                , class [ CssSelectors.UnstickyButton, CssSelectors.SmallButton ]
+                ]
+                [ text "Remove Collection" ]
             ]
+        ]
 
 
 viewMainContent : Model -> Html Msg

@@ -116,3 +116,12 @@ numTotalTones : Model -> Int
 numTotalTones =
     Collection.toDict
         >> Dict.foldl (\_ toneCollection accm -> accm + numTones toneCollection) 0
+
+
+
+-- This applies to both the top-level Model and the ToneCollection
+
+
+isPlaying : CollectionWithContext a PlayingContext -> Bool
+isPlaying x =
+    x.context == Playing
